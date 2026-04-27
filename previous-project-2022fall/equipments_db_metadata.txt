@@ -1,0 +1,13 @@
+id
+name: the name of the equipment
+level: the level of this equipment, the higher the better
+damage_min: the lowest base damage
+damage_max: the highest base damage, conforms the uniform distribution
+base_crit_chance：the basic chance of having critical strike of this weapon
+crit_chance: the bonus chance of having critical strike, one point equals to 2%
+crit_power: A critical strike in itself does additional damage to an enemy. The total critical strike damage = base damage × (3 + Crit. Power / 50).
+defense: Each point of total Defense reduces damage taken by 1 point, to a minimum of 1 damage per hit.
+immunity:Each point of Immunity reduces the probability of being debuffed by 10%, additively. For example, when wearing the Genie Shoes, which provides 6 points of Immunity, the chance of being debuffed is 40%.[1] If wearing equipment that provide sufficient total Immunity (+10 or more), the player can stay completely free from any debuffs.
+luck: Chance to discover ladders from breaking rocks while Mining.
+Geode and coal drop chance from rocks.
+(Luck does not increase the chance to receive rare minerals and artifacts from breaking geodes. These results depend only on the save file and the sequence in which the geodes are broken.)
