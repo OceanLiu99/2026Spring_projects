@@ -1,0 +1,13 @@
+monster,item,drop_rate,sell_price
+PurpleSlime,Purple Slime,0.95,50
+PurpleSlime,Coal,0.10,15
+PurpleSlime,Diamond,0.005,750
+Serpent,Bomb,0.10,50
+Serpent,Bone Fragment,0.40,12
+Serpent,Iridium Ore,0.008,100
+Mummy,Cloth,0.20,470
+Mummy,Solar Essence,0.40,40
+Mummy,Diamond,0.005,750
+IridiumBat,Bat Wings,0.95,15
+IridiumBat,Iridium Ore,0.04,100
+IridiumBat,Prismatic Shard,0.005,2000
