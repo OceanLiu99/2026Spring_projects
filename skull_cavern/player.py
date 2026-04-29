@@ -2,8 +2,7 @@
 Player class for Skull Cavern. Refactored from the 2022 Player class.
 
 Differences from 2022 Player:
-- HP is an instance field (not class field), so multiple players
-  in one process don't share state.
+- HP is an instance field (not class field), so multiple players in one process don't share state.
 - Luck is a discrete level 1-6 mapped to a representative midpoint.
 - Inventory (bombs, food) and strategy are first-class fields.
 - Equipment aggregation produces explicit, named attributes.
