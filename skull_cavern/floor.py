@@ -20,7 +20,7 @@ at worst." We use a uniform 0.20 luck coefficient, matching the wiki minimum
 The `1 / rocks_remaining` increases the per-rock exit chance as the floorempties
 (10 rocks left -> +10%, 4 left -> +25%, etc.).
 
-Out of scope (intentionally not modelled):
+Right now we don't model the following:
 - Ladders spawned by killing monsters.
 - Temporary luck buffs (food, Lucky Ring, etc.).
 - Special Charm bonus.
@@ -33,6 +33,8 @@ The last rock on a floor is guaranteed to reveal a ladder.
 # Default using bomb, and assume clear 6 rocks per bomb
 # (future can add cherry bomb and mega bomb)
 BOMB_CLEAR_COUNT = 6
+
+# Exit probability AND luck coefficient constants (from wiki)
 EXIT_BASE = 0.02
 EXIT_LUCK_COEF = 0.20
 SHAFT_PROB = 0.20
@@ -81,7 +83,7 @@ class SkullCavernFloor:
         """
         return EXIT_BASE + EXIT_LUCK_COEF * self.luck_value + 1.0 / rocks_before
 
-    def _roll_exit(self, rocks_before: int):
+    def roll_exit(self, rocks_before: int):
         if self.rng.random() >= self.exit_probability(rocks_before):
             return None
         if self.rng.random() < SHAFT_PROB:
@@ -106,7 +108,7 @@ class SkullCavernFloor:
         if force_no_exit:
             exit_result = None
         else:
-            exit_result = self._roll_exit(rocks_before)
+            exit_result = self.roll_exit(rocks_before)
         if exit_result is None and self.rocks_remaining == 0:
             return ExitResult("ladder")
         return exit_result
@@ -122,7 +124,7 @@ class SkullCavernFloor:
         cleared = min(BOMB_CLEAR_COUNT, self.rocks_remaining)
         self.rocks_remaining -= cleared
         self.bomb_used_this_floor = True
-        exit_result = self._roll_exit(rocks_before)
+        exit_result = self.roll_exit(rocks_before)
         if exit_result is None and self.rocks_remaining == 0:
             return ExitResult("ladder")
         return exit_result

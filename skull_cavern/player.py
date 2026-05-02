@@ -19,7 +19,8 @@ LUCK_VALUES = {
     6: 0.10,
 }
 
-FOOD_HEAL = 115  # assum Spicy Eel first, future update to more food (maybe a new food class)
+# assume: Spicy Eel. future update to more food (maybe a new food class)
+FOOD_HEAL = 115
 
 
 class Player:
