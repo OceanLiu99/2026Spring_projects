@@ -65,6 +65,7 @@ class SkullCavernRun:
 
     def play(self) -> RunResult:
         self.player.reset()
+        # Loop until time runs out or player dies, calculate depth
         while not self.time.is_exhausted() and self.player.is_alive():
             floor = SkullCavernFloor(
                 depth=self.depth,
@@ -81,6 +82,8 @@ class SkullCavernRun:
                 self.max_depth = self.depth
         cost = upfront_cost(self.initial_bombs, self.initial_food)
         died = not self.player.is_alive()
+
+        # return a summary of the run results
         return RunResult(
             max_depth=self.max_depth,
             net_profit=net_profit(self.gross, cost, died=died),
@@ -101,6 +104,7 @@ class SkullCavernRun:
         floor.monsters = generate_monster_list(floor.depth, self.rng_monsters)
 
     def play_floor(self, floor):
+        """Play through one floor until exit found or time runs out."""
         while floor.rocks_remaining > 0:
             if self.time.is_exhausted() or not self.player.is_alive():
                 return None
@@ -121,6 +125,17 @@ class SkullCavernRun:
             if exit_result is not None:
                 return exit_result
         return None
+    
+    def descend(self, exit_result) -> int:
+        """Descend through the exit, consuming time and returning floors descended."""
+        if exit_result.kind == "ladder":
+            self.time.consume(ACTION_COSTS["descend_ladder"])
+            return 1
+        self.time.consume(ACTION_COSTS["descend_shaft"])
+        floor_for_shaft_calc = SkullCavernFloor(
+            depth=self.depth, rng=self.rng_rocks, luck_value=self.player.luck_value
+        )
+        return floor_for_shaft_calc.descend_shaft()
 
     def collect_rock_drops(self, n, depth):
         for _ in range(n):
@@ -155,13 +170,3 @@ class SkullCavernRun:
                 self.monsters_killed += 1
                 self.gross += target.generate_drop_value(self.rng_monsters)
         return
-
-    def descend(self, exit_result) -> int:
-        if exit_result.kind == "ladder":
-            self.time.consume(ACTION_COSTS["descend_ladder"])
-            return 1
-        self.time.consume(ACTION_COSTS["descend_shaft"])
-        floor_for_shaft_calc = SkullCavernFloor(
-            depth=self.depth, rng=self.rng_rocks, luck_value=self.player.luck_value
-        )
-        return floor_for_shaft_calc.descend_shaft()

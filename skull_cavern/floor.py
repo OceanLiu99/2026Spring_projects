@@ -94,10 +94,10 @@ class SkullCavernFloor:
         """
         Break one rock with the pickaxe.
 
-        - Decrements rocks_remaining by 1.
+        - Substract rocks_remaining by 1.
         - Rolls for exit unless force_no_exit (used by tests). The exit
-          roll uses the rock count before the decrement, so the
-          sparsity bonus 1/rocks_remaining is well-defined (>=1).
+          roll uses the rock count before the subtraction, so the
+          bonus 1/rocks_remaining is well-defined (>=1).
         - If this was the last rock and no exit rolled, returns Ladder
           (guaranteed exit).
         """
@@ -114,8 +114,8 @@ class SkullCavernFloor:
         return exit_result
 
     def break_rocks_with_bomb(self):
-        """Clear up to 6 rocks. Roll exit once per bomb (not per rock).
-
+        """
+        Clear up to 6 rocks. Roll exit once per bomb (not per rock).
         The sparsity bonus uses the rock count before the bomb clears.
         """
         if self.rocks_remaining <= 0:
@@ -130,8 +130,8 @@ class SkullCavernFloor:
         return exit_result
 
     def descend_shaft(self) -> int:
-        """Number of floors descended on a shaft.
-
+        """
+        Number of floors descended on a shaft.
         x ~ U{3..8}. With prob 0.10, descend 2x-1; else x.
         """
         x = int(self.rng.integers(3, 9))
