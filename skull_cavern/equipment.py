@@ -9,7 +9,7 @@ Differences from 2022:
 from pathlib import Path
 import pandas as pd
 
-DB_PATH = Path(__file__).parent / "data" / "equipments_db.txt"
+DB_PATH = Path(__file__).parent / "data" / "equipments_db.csv"
 
 # Load equipment database
 EQUIPMENT_DB = pd.read_csv(DB_PATH, sep=",")
@@ -21,11 +21,10 @@ def load_equipment_db() -> pd.DataFrame:
 
 
 def coerce(value, default=0):
-    """Convert a DB value to int, treating '10%' as the literal int 10."""
-    # problem here: 百分比转为float；最终输出float，否则本身float会被截断
+    """Convert a DB value to int, treating '10%' as float 0.10."""
     if isinstance(value, str) and value.endswith("%"):
         try:
-            return int(value.rstrip("%"))
+            return float(value.rstrip("%"))/100.0
         except ValueError:
             return default
     try:

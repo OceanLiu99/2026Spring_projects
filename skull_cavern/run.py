@@ -13,7 +13,7 @@ from skull_cavern.economy import net_profit, upfront_cost
 
 
 class RunResult:
-    """Plain container of summary numbers from one Skull Cavern run."""
+    """Container of summary numbers from one Skull Cavern run."""
 
     def __init__(self, max_depth, net_profit, gross_revenue, cost, died,
                  time_used, bombs_used, food_used, rocks_broken,
@@ -36,9 +36,13 @@ class RunResult:
 
 
 class SkullCavernRun:
-    """One Skull Cavern day. Deterministic given (player_config, seed).
+    """
+    One Skull Cavern day. Deterministic given (player_config, seed).
 
-    Three RNG streams are spawned from the seed to keep mechanics independent.
+    Three Random Number Generators are spawned from the seed to keep mechanics independent.
+    - rng_rocks — generates random rock drops/loot
+    - rng_monsters — generates random monster encounters
+    - rng_combat — generates random combat outcomes
     """
 
     def __init__(self, player, seed: int):
@@ -61,22 +65,25 @@ class SkullCavernRun:
 
     def play(self) -> RunResult:
         self.player.reset()
+        # Loop until time runs out or player dies, calculate depth
         while not self.time.is_exhausted() and self.player.is_alive():
             floor = SkullCavernFloor(
                 depth=self.depth,
                 rng=self.rng_rocks,
                 luck_value=self.player.luck_value,
             )
-            self._populate_floor_monsters(floor)
-            exit_result = self._play_floor(floor)
+            self.populate_floor_monsters(floor)
+            exit_result = self.play_floor(floor)
             if exit_result is None:
                 break
-            descended = self._descend(exit_result)
+            descended = self.descend(exit_result)
             self.depth += descended
             if self.depth > self.max_depth:
                 self.max_depth = self.depth
         cost = upfront_cost(self.initial_bombs, self.initial_food)
         died = not self.player.is_alive()
+
+        # return a summary of the run results
         return RunResult(
             max_depth=self.max_depth,
             net_profit=net_profit(self.gross, cost, died=died),
@@ -92,11 +99,12 @@ class SkullCavernRun:
             cell_id=self.player.strategy.cell_id(),
         )
 
-    def _populate_floor_monsters(self, floor):
-        # Stub — Task 10 replaces this.
-        floor.monsters = []
+    def populate_floor_monsters(self, floor):
+        from skull_cavern.monster import generate_monster_list
+        floor.monsters = generate_monster_list(floor.depth, self.rng_monsters)
 
-    def _play_floor(self, floor):
+    def play_floor(self, floor):
+        """Play through one floor until exit found or time runs out."""
         while floor.rocks_remaining > 0:
             if self.time.is_exhausted() or not self.player.is_alive():
                 return None
@@ -105,29 +113,21 @@ class SkullCavernRun:
                 self.player.consume_bomb()
                 cleared_count = min(6, floor.rocks_remaining)
                 exit_result = floor.break_rocks_with_bomb()
-                self._collect_rock_drops(cleared_count, floor.depth)
+                self.collect_rock_drops(cleared_count, floor.depth)
                 self.rocks_broken += cleared_count
             else:
                 self.time.consume(ACTION_COSTS["pickaxe_swing"]
                                   + ACTION_COSTS["move_per_rock"])
                 exit_result = floor.break_rock()
-                self._collect_rock_drops(1, floor.depth)
+                self.collect_rock_drops(1, floor.depth)
                 self.rocks_broken += 1
-                self._maybe_combat(floor)
+                self.maybe_combat(floor)
             if exit_result is not None:
                 return exit_result
         return None
-
-    def _collect_rock_drops(self, n, depth):
-        for _ in range(n):
-            item = self.rock_table.sample(depth, self.rng_rocks)
-            self.gross += self.rock_table.value_of_drop(item, self.rng_rocks)
-
-    def _maybe_combat(self, floor):
-        # Stub — Task 11 implements 5%-per-rock activation + one_round_attack.
-        return
-
-    def _descend(self, exit_result) -> int:
+    
+    def descend(self, exit_result) -> int:
+        """Descend through the exit, consuming time and returning floors descended."""
         if exit_result.kind == "ladder":
             self.time.consume(ACTION_COSTS["descend_ladder"])
             return 1
@@ -136,3 +136,37 @@ class SkullCavernRun:
             depth=self.depth, rng=self.rng_rocks, luck_value=self.player.luck_value
         )
         return floor_for_shaft_calc.descend_shaft()
+
+    def collect_rock_drops(self, n, depth):
+        for _ in range(n):
+            item = self.rock_table.sample(depth, self.rng_rocks)
+            self.gross += self.rock_table.value_of_drop(item, self.rng_rocks)
+
+    def maybe_combat(self, floor):
+        # 5%-per-rock activation + one_round_attack
+        from skull_cavern.combat import one_round_attack, COMBAT_ACTIVATION_PROB
+        from skull_cavern.monster import resolve_mummy_kill
+
+        live_monsters = []
+        for m in floor.monsters:
+            if not m.is_dead() and not m.permanently_dead:
+                live_monsters.append(m)
+        if not live_monsters:
+            return
+        if self.rng_monsters.random() >= COMBAT_ACTIVATION_PROB:
+            return
+        idx = int(self.rng_monsters.integers(0, len(live_monsters)))
+        target = live_monsters[idx]
+        rounds, t, food_eaten = one_round_attack(self.player, target, self.rng_combat)
+        self.time.consume(t)
+        if target.is_dead():
+            if target.name == "Mummy":
+                revived = resolve_mummy_kill(target, floor.bomb_used_this_floor,
+                                             self.rng_combat)
+                if not revived:
+                    self.monsters_killed += 1
+                    self.gross += target.generate_drop_value(self.rng_monsters)
+            else:
+                self.monsters_killed += 1
+                self.gross += target.generate_drop_value(self.rng_monsters)
+        return
