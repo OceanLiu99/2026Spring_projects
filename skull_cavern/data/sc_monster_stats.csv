@@ -1,0 +1,5 @@
+name,hp,damage,defense,speed
+PurpleSlime,180,14,0,2
+Serpent,90,20,0,4
+Mummy,110,26,3,2
+IridiumBat,200,30,0,5
