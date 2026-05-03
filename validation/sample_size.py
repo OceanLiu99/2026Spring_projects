@@ -3,6 +3,8 @@
 import math
 import statistics
 
+from validation.contract import result_dict_check
+
 try:
     from scipy import stats
 except ImportError:
@@ -127,3 +129,97 @@ def ci_half_width(samples, level=0.95):
     current_std = std_value(samples)
     critical_value = t_critical_value(len(samples) - 1, level=level)
     return critical_value * current_std / math.sqrt(len(samples))
+
+
+def sweep_n(engine, build, metric,n_grid=default_n_grid,
+            n_replicates=default_n_replicates,seed_start=2000000000):
+    """For each N in n_grid, run n_replicates independent batches.
+
+    Each batch uses non-overlapping seed segments. Records mean, std,
+    ci_half_width, relative_half_width across replicates.
+
+    :return: list of dicts, one per N, with keys
+             {n, mean, std, ci_half_width, relative_half_width, n_replicates}
+    """
+    if n_replicates < 2:
+        raise ValueError("n_replicates must be at least 2")
+
+    result_rows = []
+    seed_offset = 0
+
+    # sweep N values
+    for current_n in n_grid:
+        if current_n <= 0:
+            raise ValueError("n_grid values must be positive")
+
+        batch_mean_list = []
+
+        # collect replicate batches
+        for replicate_index in range(n_replicates):
+            sample_list = []
+
+            for i in range(current_n):
+                # AI helped sketch the non-overlapping seed batches, I kept it explicit for review.
+                current_seed = seed_start + seed_offset
+                seed_offset += 1
+
+                current_build = build.copy()
+                result_row = engine(current_seed, current_build)
+                result_dict_check(result_row)
+
+                if metric not in result_row:
+                    raise ValueError(f"metric not found in result row: {metric}")
+
+                sample_list.append(float(result_row[metric]))
+
+            batch_mean = mean_value(sample_list)
+            batch_mean_list.append(batch_mean)
+
+        current_mean = mean_value(batch_mean_list)
+        current_std = std_value(batch_mean_list)
+        current_half_width = ci_half_width(batch_mean_list)
+
+        # use max(..., 1.0) to avoid exploding relative width near zero
+        denominator = max(abs(current_mean), 1.0)
+        relative_half_width = current_half_width / denominator
+
+        current_row = {
+            "n": current_n,
+            "mean": current_mean,
+            "std": current_std,
+            "ci_half_width": current_half_width,
+            "relative_half_width": relative_half_width,
+            "n_replicates": n_replicates,
+        }
+        result_rows.append(current_row)
+
+    return result_rows
+
+
+def recommend_n(sweep_result, target_relative=default_target_relative):
+    """Smallest N whose relative_half_width <= target AND remains stable
+    on the next grid point (i.e. two adjacent grid points both meet target).
+
+    :return: int N or None if no grid point qualifies
+    """
+    if target_relative < 0:
+        raise ValueError("target_relative must not be negative")
+
+    if len(sweep_result) < 2:
+        return None
+
+    sorted_rows = sorted(sweep_result, key=lambda row: row["n"])
+
+    # need two adjacent grid points to avoid one lucky small CI row
+    # AI suggested the two-grid check, I kept it to avoid choosing one lucky N.
+    for i in range(len(sorted_rows) - 1):
+        current_row = sorted_rows[i]
+        next_row = sorted_rows[i + 1]
+
+        current_ok = current_row["relative_half_width"] <= target_relative
+        next_ok = next_row["relative_half_width"] <= target_relative
+
+        if current_ok and next_ok:
+            return current_row["n"]
+
+    return None
