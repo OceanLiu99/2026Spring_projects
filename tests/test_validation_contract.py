@@ -10,3 +10,8 @@ def test_validation_contract_missing_key():
     row = {"seed": 1, "cell_id": "pickaxe_nofood"}
     with pytest.raises(ValueError):
         result_dict_check(row)
+
+def test_validation_contract_rejects_non_dict():
+    row = None
+    with pytest.raises(ValueError):
+        result_dict_check(row)

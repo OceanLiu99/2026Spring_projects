@@ -17,4 +17,4 @@ __pycache__/
 
 # Project docs (specs, plans) — not tracked
 docs/
-tests/
+#tests/
