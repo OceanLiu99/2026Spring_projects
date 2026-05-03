@@ -136,7 +136,8 @@ def sweep_n(engine, build, metric,n_grid=default_n_grid,
     """For each N in n_grid, run n_replicates independent batches.
 
     Each batch uses non-overlapping seed segments. Records mean, std,
-    ci_half_width, relative_half_width across replicates.
+    ci_half_width, relative_half_width across replicates.Use absolutely
+    large seed values to avoid collisions during the sweep.
 
     :return: list of dicts, one per N, with keys
              {n, mean, std, ci_half_width, relative_half_width, n_replicates}
