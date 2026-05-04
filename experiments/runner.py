@@ -11,6 +11,7 @@ from skull_cavern.player import Player
 from skull_cavern.strategy import Strategy, BombStrategy, FoodStrategy
 from skull_cavern.run import SkullCavernRun
 from skull_cavern.economy import starting_inventory
+from validation.contract import result_dict_check
 
 # default equipment for all runs, which is the best equipment available in the game that a player can buy
 EQUIPMENT = ["Space Boots", "Lava Katana", "", ""]
@@ -56,7 +57,9 @@ def run_cell(experiment_id: int, cell_idx: int, cell_id: str,
         d = result.to_dict()
         d["luck_level"] = luck_level
         d["experiment_id"] = experiment_id
+        result_dict_check(d)
         rows.append(d)
+
     return pd.DataFrame(rows)
 
 
