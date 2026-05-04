@@ -54,12 +54,12 @@ def write_csv_rows(output_path, rows):
     return output_path
 
 
-def convergence_rows(n_runs=200):
+def convergence_rows(engine, n_runs=200):
     """Build convergence rows for max_depth and net_profit.
     Each build gets a separated seed range. The `build_index * 10000` part is
     a simple guard so pickaxe and bomb validation runs do not reuse seeds.
 
-    >>> rows = convergence_rows(n_runs=60)
+    >>> rows = convergence_rows(simple_mock_run, n_runs=60)
     >>> len(rows)
     8
     >>> "final_drift" in rows[0]
@@ -74,7 +74,8 @@ def convergence_rows(n_runs=200):
 
         for metric in metrics:
             summary = assess_engine(
-                simple_mock_run,
+                # simple_mock_run,
+                engine,
                 current_build,
                 metric,
                 n_runs=n_runs,
@@ -98,13 +99,13 @@ def convergence_rows(n_runs=200):
     return rows
 
 
-def sensitivity_rows(n_per_value=200):
+def sensitivity_rows(engine, n_per_value=200, bomb_sensitivity_mode="use_bombs"):
     """Build sensitivity rows for luck and bomb direction checks.
-    Luck is checked with three numeric points, while bombs are checked with
-    two boolean points. `value_as_number` inside sensitivity.py maps ‘False/True’
-    to 0/1 before the Pearson correlation is calculated.
+    Luck is checked with three numeric points. Bomb use is checked by comparing
+    either the use_bombs flag (mock engine) or matched cell_id values (real
+    engine), because the real engine derives bomb inventory from cell_id.
 
-    >>> rows = sensitivity_rows(n_per_value=10)
+    >>> rows = sensitivity_rows(simple_mock_run, n_per_value=10)
     >>> len(rows)
     2
     >>> rows[0]["attr_name"]
@@ -114,7 +115,8 @@ def sensitivity_rows(n_per_value=200):
     base_build = {"cell_id": "bomb_food", "luck_level": 4, "use_bombs": True}
 
     luck_sweep = sweep_attribute(
-        simple_mock_run,
+        # simple_mock_run,
+        engine,
         base_build,
         "luck_level",
         (1, 4, 6),
@@ -135,49 +137,91 @@ def sensitivity_rows(n_per_value=200):
         "monotonic_passed": luck_monotonic["passed"],
     })
 
+    if bomb_sensitivity_mode == "use_bombs":
+        bomb_sweep = sweep_attribute(
+            engine,
+            {"cell_id": "pickaxe_food", "luck_level": 4, "use_bombs": False},
+            "use_bombs",
+            (False, True),
+            "max_depth",
+            n_per_value=n_per_value,
+            seed_start=3100000000,
+        )
+        bomb_report = correlation_report(bomb_sweep)
+        bomb_monotonic = validate_monotonic(bomb_sweep, expected_sign="+")
+
+        rows.append({
+            "attr_name": "use_bombs",
+            "metric": "max_depth",
+            "r": bomb_report["r"],
+            "p_value": bomb_report["p_value"],
+            "n_points": bomb_report["n_points"],
+            "expected_sign": "+",
+            "monotonic_passed": bomb_monotonic["passed"],
+        })
+        return rows
+
+    if bomb_sensitivity_mode != "cell_id":
+        raise ValueError("bomb_sensitivity_mode must be 'use_bombs' or 'cell_id'")
+
     bomb_sweep = sweep_attribute(
-        simple_mock_run,
-        base_build,
-        "use_bombs",
-        (False, True),
+        engine,
+        {"cell_id": "pickaxe_food", "luck_level": 4, "use_bombs": False},
+        "cell_id",
+        ("pickaxe_food", "bomb_food"),
         "max_depth",
         n_per_value=n_per_value,
         seed_start=3100000000,
     )
-    bomb_report = correlation_report(bomb_sweep)
+
     bomb_monotonic = validate_monotonic(bomb_sweep, expected_sign="+")
+    bomb_rows = bomb_sweep["rows"]
+    bomb_delta = bomb_rows[-1]["mean"] - bomb_rows[0]["mean"]
+    bomb_passed = bomb_monotonic["passed"] and bomb_delta > 0.0
+    if bomb_delta > 0.0:
+        bomb_r = 1.0
+    elif bomb_delta < 0.0:
+        bomb_r = -1.0
+    else:
+        bomb_r = 0.0
 
     rows.append({
-        "attr_name": "use_bombs",
+        "attr_name": "cell_id_bomb_food",
         "metric": "max_depth",
-        "r": bomb_report["r"],
-        "p_value": bomb_report["p_value"],
-        "n_points": bomb_report["n_points"],
+        "r": bomb_r,
+        "p_value": None,
+        "n_points": 2,
         "expected_sign": "+",
-        "monotonic_passed": bomb_monotonic["passed"],
+        "monotonic_passed": bomb_passed,
     })
 
     return rows
 
 
-def run_phase2_validation(output_dir=None, n_runs=200,
-                          sample_n_grid=None, sample_replicates=5,
-                          sensitivity_n=200):
+def run_phase2_validation(output_dir=None, engine=None, suffix="",
+                          n_runs=200, sample_n_grid=None,
+                          sample_replicates=5, sensitivity_n=200,
+                          progress_label=None,
+                          bomb_sensitivity_mode="use_bombs"):
     """Run Phase 2 validation and write the four planned CSV files.
-
     The default output directory is the project `outputs/data` folder. Tests
     pass a smaller output directory and smaller N values so the smoke check is
     fast but still exercises the full pipeline.
 
     :param output_dir: optional output directory, defaults to outputs/data
+    :param engine: engine function like simple_mock_run(seed, build)
+    :param suffix: optional filename suffix, such as "_mock"
     :param n_runs: convergence runs per build and metric
     :param sample_n_grid: optional N grid for sample-size sweep
     :param sample_replicates: number of replicate batches per N
     :param sensitivity_n: runs per sensitivity attribute value
+    :param progress_label: optional label for progress prints
+    :param bomb_sensitivity_mode: "use_bombs" for mock-like engines or
+                                  "cell_id" for real SkullCavernRun
     :return: summary dict with output paths and recommended N
 
     >>> path = output_data_dir / "_doctest_phase2"
-    >>> summary = run_phase2_validation(path, n_runs=60, sample_n_grid=(10, 20), sample_replicates=3, sensitivity_n=10)
+    >>> summary = run_phase2_validation(path, engine=simple_mock_run, n_runs=60, sample_n_grid=(10, 20), sample_replicates=3, sensitivity_n=10)
     >>> summary["n_final_path"].exists()
     True
     >>> for csv_path in path.glob("*.csv"):
@@ -188,25 +232,32 @@ def run_phase2_validation(output_dir=None, n_runs=200,
         output_dir = output_data_dir
     output_dir = Path(output_dir)
 
+    if engine is None:
+        engine = simple_mock_run
+
     if sample_n_grid is None:
         sample_n_grid = (50, 100, 200, 500, 1000)
 
     # AI-assisted outline: order the driver as convergence -> sample size
     # -> N_final -> sensitivity. I checked the concrete calls and fields.
     # four output tables
-    convergence_path = output_dir / "validation_convergence.csv"
-    sample_size_path = output_dir / "validation_sample_size.csv"
-    sensitivity_path = output_dir / "validation_sensitivity.csv"
-    n_final_path = output_dir / "validation_n_final.csv"
+    convergence_path = output_dir / f"validation_convergence{suffix}.csv"
+    sample_size_path = output_dir / f"validation_sample_size{suffix}.csv"
+    sensitivity_path = output_dir / f"validation_sensitivity{suffix}.csv"
+    n_final_path = output_dir / f"validation_n_final{suffix}.csv"
 
     # convergence check
-    convergence_result = convergence_rows(n_runs=n_runs)
+    if progress_label is not None:
+        print(f"[phase2:{progress_label}] running convergence")
+    convergence_result = convergence_rows(engine, n_runs=n_runs)
     write_csv_rows(convergence_path, convergence_result)
 
     # sample-size check
+    if progress_label is not None:
+        print(f"[phase2:{progress_label}] running sample size")
     sample_build = {"cell_id": "bomb_food", "luck_level": 4, "use_bombs": True}
     sample_result = sweep_n(
-        simple_mock_run,
+        engine,
         sample_build,
         "max_depth",
         n_grid=sample_n_grid,
@@ -235,7 +286,13 @@ def run_phase2_validation(output_dir=None, n_runs=200,
     write_csv_rows(n_final_path, n_final_rows)
 
     # sensitivity check
-    sensitivity_result = sensitivity_rows(n_per_value=sensitivity_n)
+    if progress_label is not None:
+        print(f"[phase2:{progress_label}] running sensitivity")
+    sensitivity_result = sensitivity_rows(
+        engine,
+        n_per_value=sensitivity_n,
+        bomb_sensitivity_mode=bomb_sensitivity_mode,
+    )
     write_csv_rows(sensitivity_path, sensitivity_result)
 
     return {
@@ -247,18 +304,53 @@ def run_phase2_validation(output_dir=None, n_runs=200,
     }
 
 
-def main():
+def main(engine_name="mock", run_size="default"):
     """Run when called with python -m validation.run_phase2.
-    This wrapper keeps command-line behavior separate from the testable
-    `run_phase2_validation` function.
+    Design different output models to test distinct use cases.
+    :param engine_name: "mock" or "real"
+    :param run_size: "default", "fast", or "full"
     """
-    summary = run_phase2_validation()
-    print(f"[phase2] N_final recommended = {summary['n_final']}")
-    print(f"[phase2] wrote {summary['convergence_path']}")
-    print(f"[phase2] wrote {summary['sample_size_path']}")
-    print(f"[phase2] wrote {summary['sensitivity_path']}")
-    print(f"[phase2] wrote {summary['n_final_path']}")
+    if engine_name == "real":
+        from validation.real_engine import real_engine_run
+        engine = real_engine_run
+        suffix = ""
+        bomb_sensitivity_mode = "cell_id"
+    else:
+        engine = simple_mock_run
+        suffix = "_mock"
+        bomb_sensitivity_mode = "use_bombs"
+
+    if engine_name == "real" and run_size == "fast":
+        summary = run_phase2_validation(
+            engine=engine,
+            suffix="_real_fast",
+            n_runs=200,
+            sample_n_grid=(50, 100, 200, 500, 1000),
+            sample_replicates=3,
+            sensitivity_n=100,
+            progress_label="real-fast",
+            bomb_sensitivity_mode=bomb_sensitivity_mode,
+        )
+        print_label = "real-fast"
+    else:
+        summary = run_phase2_validation(
+            engine=engine,
+            suffix=suffix,
+            progress_label=engine_name,
+            bomb_sensitivity_mode=bomb_sensitivity_mode,
+        )
+        print_label = engine_name
+
+    print(f"[phase2:{print_label}] N_final recommended = {summary['n_final']}")
+    print(f"[phase2:{print_label}] wrote {summary['convergence_path']}")
+    print(f"[phase2:{print_label}] wrote {summary['sample_size_path']}")
+    print(f"[phase2:{print_label}] wrote {summary['sensitivity_path']}")
+    print(f"[phase2:{print_label}] wrote {summary['n_final_path']}")
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    engine_name = sys.argv[1] if len(sys.argv) > 1 else "mock"
+    run_size = sys.argv[2] if len(sys.argv) > 2 else "default"
+    main(engine_name, run_size)
+
