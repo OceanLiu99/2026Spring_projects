@@ -1,0 +1,3 @@
+attr_name,metric,r,p_value,n_points,expected_sign,monotonic_passed
+luck_level,max_depth,0.9997253116436658,,3,+,True
+use_bombs,max_depth,1.0,,2,+,True
