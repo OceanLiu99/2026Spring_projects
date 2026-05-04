@@ -1,5 +1,7 @@
 """
 H2: 4 strategy cells x 500 runs = 2000 runs at neutral luck.
+RUNS_PER_CELL comes from Phase2 real-engine validation, especially the noisy
+net_profit cells checked in the targeted extension.
 
 Output: outputs/data/h2_profit_distributions.csv
 """
@@ -8,8 +10,12 @@ import pandas as pd
 
 from experiments.runner import run_cell, write_csv, assert_equipment_present
 
+# Phase2 real-engine validation selected this as the final run count.
+# See outputs/data/validation_n_final.csv and
+# outputs/data/validation_n_extension_summary_real.csv.
+RUNS_PER_CELL = 2000
+# keeps H2 seeds separate from H1 runs
 EXPERIMENT_ID = 2
-RUNS_PER_CELL = 500
 LUCK_NEUTRAL = 4  # representative value 0.035 (closest to 0)
 
 

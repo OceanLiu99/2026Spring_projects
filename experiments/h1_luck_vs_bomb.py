@@ -1,5 +1,7 @@
 """
 H1: 6 luck levels x 2 bomb strategies x 500 runs = 6000 runs.
+RUNS_PER_CELL comes from Phase2 real-engine validation, not from the earlier
+testing default.
 
 Food strategy fixed to no-food to isolate luck-vs-bomb axis.
 Output: outputs/data/h1_luck_vs_bomb.csv
@@ -9,9 +11,12 @@ import pandas as pd
 
 from experiments.runner import run_cell, write_csv, assert_equipment_present
 
+# Phase2 real-engine validation selected this as the final run count.
+# See outputs/data/validation_n_final.csv and
+# outputs/data/validation_n_extension_summary_real.csv.
+RUNS_PER_CELL = 2000
+# keeps H1 seeds separate from H2 runs
 EXPERIMENT_ID = 1
-RUNS_PER_CELL = 500
-
 
 def main():
     assert_equipment_present()
