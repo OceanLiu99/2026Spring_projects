@@ -64,7 +64,7 @@ def t_critical_value(degrees_freedom, level=0.95):
     if level <= 0 or level >= 1:
         raise ValueError("level must be between 0 and 1")
 
-    # ***AI-assisted draft***: use the t distribution formula, then I checked the CI math.
+    # Use the t distribution formula for CI half-width.
     alpha = 1.0 - level
     if stats is not None:
         return float(stats.t.ppf(1.0 - alpha / 2.0, degrees_freedom))
@@ -160,7 +160,7 @@ def sweep_n(engine, build, metric,n_grid=default_n_grid,
             sample_list = []
 
             for i in range(current_n):
-                # AI helped sketch the non-overlapping seed batches, I kept it explicit for review.
+                # Use non-overlapping seed batches so repeated N sweeps do not reuse runs.
                 current_seed = seed_start + seed_offset
                 seed_offset += 1
 
@@ -212,7 +212,7 @@ def recommend_n(sweep_result, target_relative=default_target_relative):
     sorted_rows = sorted(sweep_result, key=lambda row: row["n"])
 
     # need two adjacent grid points to avoid one lucky small CI row
-    # AI suggested the two-grid check, I kept it to avoid choosing one lucky N.
+    # Require two adjacent passing grid points to avoid choosing one lucky N.
     for i in range(len(sorted_rows) - 1):
         current_row = sorted_rows[i]
         next_row = sorted_rows[i + 1]

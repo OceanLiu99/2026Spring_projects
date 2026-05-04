@@ -3,6 +3,7 @@ from pathlib import Path
 
 from validation.run_phase2 import run_phase2_validation
 from validation.run_phase2 import sensitivity_rows
+from validation.run_phase2 import n_final_sample_plans
 from validation.simple_mock import simple_mock_run
 
 
@@ -63,19 +64,21 @@ def test_run_phase2_writes_four_csvs():
         n_final_rows = read_rows(summary["n_final_path"])
 
         assert len(convergence_rows) > 0
-        assert len(sample_size_rows) == 2
+        assert len(sample_size_rows) == len(n_final_sample_plans()) * 2
         assert len(sensitivity_rows) == 2
-        assert len(n_final_rows) == 1
+        assert len(n_final_rows) > 1
 
         assert "cell_id" in convergence_rows[0]
         assert "converged" in convergence_rows[0]
         assert "relative_half_width" in sample_size_rows[0]
         assert "monotonic_passed" in sensitivity_rows[0]
         assert "evidence" in n_final_rows[0]
+        assert n_final_rows[0]["source"] == "overall"
+        assert n_final_rows[0]["n_final"] != ""
     finally:
         remove_test_output(output_dir)
 
-#real engine update
+
 def test_run_phase2_suffix_writes_mock_named_csvs():
     output_dir = Path("outputs") / "data" / "_test_phase2"
     remove_test_output(output_dir)

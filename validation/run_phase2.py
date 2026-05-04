@@ -25,6 +25,70 @@ validation_builds = (
 )
 
 
+def cell_uses_bombs(cell_id):
+    """Return whether a strategy cell should carry bombs.
+
+    :param cell_id: strategy cell name
+    :return: bool
+
+    >>> cell_uses_bombs("bomb_food")
+    True
+    >>> cell_uses_bombs("pickaxe_nofood")
+    False
+    """
+    return str(cell_id).startswith("bomb")
+
+
+def n_final_sample_plans():
+    """List the real experiment cells that should influence N_final.
+    H1 needs max_depth across all luck x bomb cells. H2 needs net_profit
+    across all strategy cells at neutral luck. H3 reuses H1/H2 outputs, so it
+    does not get a separate sample-size budget here.
+
+    :return: list of plan dicts
+
+    >>> plans = n_final_sample_plans()
+    >>> len(plans)
+    16
+    >>> plans[0]["experiment"], plans[0]["metric"]
+    ('H1', 'max_depth')
+    >>> plans[-1]["experiment"], plans[-1]["metric"]
+    ('H2', 'net_profit')
+    """
+    plans = []
+
+    # H1: luck x bomb comparison for max_depth
+    for luck_level in (1, 2, 3, 4, 5, 6):
+        for cell_id in ("pickaxe_nofood", "bomb_nofood"):
+            plans.append({
+                "experiment": "H1",
+                "cell_id": cell_id,
+                "luck_level": luck_level,
+                "metric": "max_depth",
+                "build": {
+                    "cell_id": cell_id,
+                    "luck_level": luck_level,
+                    "use_bombs": cell_uses_bombs(cell_id),
+                },
+            })
+
+    # H2: strategy comparison for net_profit at neutral luck
+    for cell_id in ("pickaxe_nofood", "pickaxe_food", "bomb_nofood", "bomb_food"):
+        plans.append({
+            "experiment": "H2",
+            "cell_id": cell_id,
+            "luck_level": 4,
+            "metric": "net_profit",
+            "build": {
+                "cell_id": cell_id,
+                "luck_level": 4,
+                "use_bombs": cell_uses_bombs(cell_id),
+            },
+        })
+
+    return plans
+
+
 def write_csv_rows(output_path, rows):
     """Write a list of flat dict rows to CSV.
     The first row controls the CSV header order. Keep all rows using the same
@@ -74,7 +138,6 @@ def convergence_rows(engine, n_runs=200):
 
         for metric in metrics:
             summary = assess_engine(
-                # simple_mock_run,
                 engine,
                 current_build,
                 metric,
@@ -115,7 +178,6 @@ def sensitivity_rows(engine, n_per_value=200, bomb_sensitivity_mode="use_bombs")
     base_build = {"cell_id": "bomb_food", "luck_level": 4, "use_bombs": True}
 
     luck_sweep = sweep_attribute(
-        # simple_mock_run,
         engine,
         base_build,
         "luck_level",
@@ -198,6 +260,162 @@ def sensitivity_rows(engine, n_per_value=200, bomb_sensitivity_mode="use_bombs")
     return rows
 
 
+def sample_size_rows(engine, n_grid=None, n_replicates=5,
+                     target_relative=0.05, progress_label=None):
+    """Run sample-size sweeps for every H1/H2 design cell.
+    The old draft used only `bomb_food / max_depth`, which could recommend a
+    small N that did not represent H1 or H2. This helper keeps the evidence
+    tied to the actual experiment cells that will later be rerun.
+
+    :param engine: engine function like simple_mock_run(seed, build)
+    :param n_grid: candidate N values
+    :param n_replicates: replicate batches per N
+    :param target_relative: CI half-width target
+    :param progress_label: optional label for progress prints
+    :return: (csv rows, decision rows)
+
+    >>> rows, decisions = sample_size_rows(simple_mock_run, n_grid=(10, 20), n_replicates=3)
+    >>> len(rows)
+    32
+    >>> len(decisions)
+    16
+    >>> rows[0]["experiment"]
+    'H1'
+    """
+    if n_grid is None:
+        n_grid = (50, 100, 200, 500, 1000)
+    n_grid = tuple(n_grid)
+
+    result_rows = []
+    decision_rows = []
+    plans = n_final_sample_plans()
+
+    # collect sample-size evidence for each final experiment cell
+    for plan_index in range(len(plans)):
+        current_plan = plans[plan_index]
+
+        if progress_label is not None:
+            print(
+                f"[phase2:{progress_label}] sample size "
+                f"{current_plan['experiment']} {current_plan['cell_id']} "
+                f"luck={current_plan['luck_level']} {current_plan['metric']} "
+                f"({plan_index + 1}/{len(plans)})"
+            )
+
+        sweep_result = sweep_n(
+            engine,
+            current_plan["build"],
+            current_plan["metric"],
+            n_grid=n_grid,
+            n_replicates=n_replicates,
+            seed_start=2000000000 + plan_index * 1000000,
+        )
+        recommended_n = recommend_n(
+            sweep_result,
+            target_relative=target_relative,
+        )
+
+        if recommended_n is None:
+            selected_n = max(n_grid)
+            evidence = "no two adjacent grid points met target; using largest tested N"
+        else:
+            selected_n = recommended_n
+            evidence = "first N with two adjacent relative CI half-widths under target"
+
+        decision_rows.append({
+            "source": "sample_size",
+            "experiment": current_plan["experiment"],
+            "cell_id": current_plan["cell_id"],
+            "luck_level": current_plan["luck_level"],
+            "metric": current_plan["metric"],
+            "n_final": selected_n,
+            "target_relative": target_relative,
+            "convergence_rel_tol": "",
+            "evidence": evidence,
+        })
+
+        for sweep_row in sweep_result:
+            result_rows.append({
+                "experiment": current_plan["experiment"],
+                "cell_id": current_plan["cell_id"],
+                "luck_level": current_plan["luck_level"],
+                "metric": current_plan["metric"],
+                "n": sweep_row["n"],
+                "mean": sweep_row["mean"],
+                "std": sweep_row["std"],
+                "ci_half_width": sweep_row["ci_half_width"],
+                "relative_half_width": sweep_row["relative_half_width"],
+                "n_replicates": sweep_row["n_replicates"],
+                "n_recommended": recommended_n if recommended_n is not None else "",
+                "target_relative": target_relative,
+                "evidence": evidence,
+            })
+
+    return result_rows, decision_rows
+
+
+def n_final_rows(sample_decisions, convergence_result):
+    """Combine sample-size and convergence evidence into one N_final table.
+    The first row is the overall value to use for H1 and H2. Later rows show
+    which sample-size or convergence check pushed the final value upward.
+
+    :param sample_decisions: decision rows returned by sample_size_rows
+    :param convergence_result: rows returned by convergence_rows
+    :return: (csv rows, overall_n_final)
+
+    >>> sample_decisions = [{"source": "sample_size", "experiment": "H1", "cell_id": "bomb_nofood", "luck_level": 6, "metric": "max_depth", "n_final": 50, "target_relative": 0.05, "convergence_rel_tol": "", "evidence": "demo"}]
+    >>> convergence_result = [{"cell_id": "bomb_nofood", "metric": "max_depth", "converged": False, "n_required": None, "n": 200, "rel_tol": 0.01}]
+    >>> rows, overall_n = n_final_rows(sample_decisions, convergence_result)
+    >>> overall_n
+    200
+    >>> rows[0]["source"]
+    'overall'
+    """
+    rows = []
+    candidate_ns = []
+
+    for decision in sample_decisions:
+        current_n = decision["n_final"]
+        candidate_ns.append(int(current_n))
+        rows.append(decision)
+
+    for convergence_row in convergence_result:
+        if convergence_row["converged"] and convergence_row["n_required"] is not None:
+            current_n = convergence_row["n_required"]
+            evidence = "rolling mean converged by n_required"
+        else:
+            current_n = convergence_row["n"]
+            evidence = "not converged by validation limit; using collected n as guard"
+
+        candidate_ns.append(int(current_n))
+        rows.append({
+            "source": "convergence",
+            "experiment": "phase2",
+            "cell_id": convergence_row["cell_id"],
+            "luck_level": 4,
+            "metric": convergence_row["metric"],
+            "n_final": current_n,
+            "target_relative": "",
+            "convergence_rel_tol": convergence_row["rel_tol"],
+            "evidence": evidence,
+        })
+
+    overall_n = max(candidate_ns)
+    rows.insert(0, {
+        "source": "overall",
+        "experiment": "H1_H2",
+        "cell_id": "all_design_cells",
+        "luck_level": "mixed",
+        "metric": "max_depth_and_net_profit",
+        "n_final": overall_n,
+        "target_relative": 0.05,
+        "convergence_rel_tol": 0.01,
+        "evidence": "max over H1/H2 sample-size decisions and convergence guards",
+    })
+
+    return rows, overall_n
+
+
 def run_phase2_validation(output_dir=None, engine=None, suffix="",
                           n_runs=200, sample_n_grid=None,
                           sample_replicates=5, sensitivity_n=200,
@@ -238,9 +456,8 @@ def run_phase2_validation(output_dir=None, engine=None, suffix="",
     if sample_n_grid is None:
         sample_n_grid = (50, 100, 200, 500, 1000)
 
-    # AI-assisted outline: order the driver as convergence -> sample size
-    # -> N_final -> sensitivity. I checked the concrete calls and fields.
-    # four output tables
+    # Keep the driver order aligned with the validation narrative:
+    # convergence -> sample size -> N_final -> sensitivity.
     convergence_path = output_dir / f"validation_convergence{suffix}.csv"
     sample_size_path = output_dir / f"validation_sample_size{suffix}.csv"
     sensitivity_path = output_dir / f"validation_sensitivity{suffix}.csv"
@@ -255,35 +472,21 @@ def run_phase2_validation(output_dir=None, engine=None, suffix="",
     # sample-size check
     if progress_label is not None:
         print(f"[phase2:{progress_label}] running sample size")
-    sample_build = {"cell_id": "bomb_food", "luck_level": 4, "use_bombs": True}
-    sample_result = sweep_n(
+    sample_result, sample_decisions = sample_size_rows(
         engine,
-        sample_build,
-        "max_depth",
         n_grid=sample_n_grid,
         n_replicates=sample_replicates,
-        seed_start=2000000000,
+        target_relative=0.05,
+        progress_label=progress_label,
     )
     write_csv_rows(sample_size_path, sample_result)
 
-    recommended_n = recommend_n(sample_result)
-
     # N_final decision
-    if recommended_n is None:
-        evidence = "no grid point met target on two adjacent N values"
-        n_final = ""
-    else:
-        evidence = "first N with two adjacent relative CI half-widths under target"
-        n_final = recommended_n
-
-    n_final_rows = [{
-        "metric": "max_depth",
-        "cell_id": sample_build["cell_id"],
-        "n_final": n_final,
-        "target_relative": 0.05,
-        "evidence": evidence,
-    }]
-    write_csv_rows(n_final_path, n_final_rows)
+    n_final_result, recommended_n = n_final_rows(
+        sample_decisions,
+        convergence_result,
+    )
+    write_csv_rows(n_final_path, n_final_result)
 
     # sensitivity check
     if progress_label is not None:
@@ -324,10 +527,10 @@ def main(engine_name="mock", run_size="default"):
         summary = run_phase2_validation(
             engine=engine,
             suffix="_real_fast",
-            n_runs=200,
-            sample_n_grid=(50, 100, 200, 500, 1000),
-            sample_replicates=3,
-            sensitivity_n=100,
+            n_runs=80,
+            sample_n_grid=(20, 50),
+            sample_replicates=2,
+            sensitivity_n=20,
             progress_label="real-fast",
             bomb_sensitivity_mode=bomb_sensitivity_mode,
         )
