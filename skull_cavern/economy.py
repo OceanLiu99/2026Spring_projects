@@ -7,8 +7,8 @@ PRICE_PATH = Path(__file__).parent / "data" / "bomb_food_prices.csv"
 PRICE_DF = pd.read_csv(PRICE_PATH).set_index("item")
 
 # Default prices of bomb and spicy eel, future can add more items
-PRICE_BOMB = PRICE_DF.loc["bomb", "price"]
-PRICE_FOOD = PRICE_DF.loc["spicy_eel", "price"]
+PRICE_BOMB = PRICE_DF.loc["Bomb", "unit_price"]
+PRICE_FOOD = PRICE_DF.loc["Spicy Eel", "unit_price"]
 
 # Death penalty constants
 # assumed: 70% of gross is kept

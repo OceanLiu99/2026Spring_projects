@@ -248,29 +248,41 @@ into the same pool.
 
 ## How to Run
 
-Use the project virtual environment on Windows:
+First activate the project virtual environment.
 
+**Windows:**
 ```powershell
-.\.venv\Scripts\python.exe -m pytest tests\ -v
-.\.venv\Scripts\python.exe -m doctest validation\run_phase2.py validation\targeted_n_extension.py analysis\stats.py -v
+.\.venv\Scripts\Activate.ps1
 ```
+
+**macOC / Linux:**
+
+```bash
+source .venv/bin/activate
+```
+
+Then run tests and doctests:
+```bash
+python -m pytest tests/ -v
+python -m doctest validation/run_phase2.py validation/targeted_n_extension.py analysis/stats.py -v
+``` 
 
 Run Phase 2 validation:
 
-```powershell
-.\.venv\Scripts\python.exe -m validation.run_phase2 mock
-.\.venv\Scripts\python.exe -m validation.run_phase2 real
-.\.venv\Scripts\python.exe -m validation.targeted_n_extension real
+```bash
+python -m validation.run_phase2 mock
+python -m validation.run_phase2 real
+python -m validation.targeted_n_extension real
 ```
 
 Run final experiments and analysis:
 
-```powershell
-.\.venv\Scripts\python.exe -m experiments.h1_luck_vs_bomb
-.\.venv\Scripts\python.exe -m experiments.h2_profit_distributions
-.\.venv\Scripts\python.exe -m experiments.h3_depth_vs_profit
-.\.venv\Scripts\python.exe -m analysis.run_analysis
-.\.venv\Scripts\python.exe -m analysis.plots
+```bash
+python -m experiments.h1_luck_vs_bomb
+python -m experiments.h2_profit_distributions
+python -m experiments.h3_depth_vs_profit
+python -m analysis.run_analysis
+python -m analysis.plots
 ```
 
 ## Outputs
