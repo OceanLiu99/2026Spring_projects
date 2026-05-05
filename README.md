@@ -57,7 +57,7 @@ between `max_depth` and `net_profit`.
 
 ### Phase 1 - Random Variables
 
-The simulation randomizes the events that make a Skull Cavern run uncertain:
+The simulation randomizes the events that make a Skull Cavern run uncertain based on game mechanics:
 
 - ladder probability
 - shaft depth distribution
@@ -352,4 +352,4 @@ not used as final N evidence.
 - [Stardew Valley Wiki - Footwear](https://stardewvalleywiki.com/Footwear)
 - [Stardew Valley Wiki - Weapons](https://stardewvalleywiki.com/Weapons#Sword)
 - Previous IS597 Fall 2022 Stardew Valley mining simulation project, included
-  locally under `previous-project-2022fall/`.
+  locally under `previous-project-2022fall/`. Its original source is [https://github.com/PhiloJiaqiWang/2022Fall_projects](https://github.com/PhiloJiaqiWang/2022Fall_projects)
