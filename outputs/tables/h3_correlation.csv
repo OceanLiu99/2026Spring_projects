@@ -1,0 +1,4 @@
+hypothesis,group,metric_x,metric_y,n,r,r_low,r_high,p_value,threshold,hypothesis_passed
+H3,pooled,max_depth,net_profit,32000,0.3055553163514614,0.295587916283391,0.3154561978870499,0.0,0.6,False
+H3,experiment_1,max_depth,net_profit,24000,-0.1951466630466901,-0.2072871281602243,-0.18294609877130064,1.2397089533403853e-204,0.6,False
+H3,experiment_2,max_depth,net_profit,8000,0.5420672654607188,0.5264042183425127,0.5573625132427167,0.0,0.6,False
