@@ -11,17 +11,17 @@ import pandas as pd
 MONSTER_STATS_PATH = Path(__file__).parent / "data" / "sc_monster_stats.csv"
 MONSTER_DROPS_PATH = Path(__file__).parent / "data" / "sc_monster_drop.csv"
 
-_STATS_DF = pd.read_csv(MONSTER_STATS_PATH).set_index("name")
-_DROPS_DF = pd.read_csv(MONSTER_DROPS_PATH)
+STATS_DF = pd.read_csv(MONSTER_STATS_PATH).set_index("name")
+DROPS_DF = pd.read_csv(MONSTER_DROPS_PATH)
 
 
 class Monster:
     """One monster instance. Stats come from sc_monster_stats.csv by name."""
 
     def __init__(self, name: str):
-        if name not in _STATS_DF.index:
+        if name not in STATS_DF.index:
             raise ValueError(f"unknown monster {name!r}")
-        row = _STATS_DF.loc[name]
+        row = STATS_DF.loc[name]
         self.name = name
         self.hp = int(row["hp"])
         self.damage = int(row["damage"])
@@ -36,7 +36,7 @@ class Monster:
         return self.hp_remaining <= 0
 
     def generate_drop_value(self, rng) -> int:
-        rows = _DROPS_DF[_DROPS_DF["monster"] == self.name]
+        rows = DROPS_DF[DROPS_DF["monster"] == self.name]
         total = 0
         for _, r in rows.iterrows():
             if rng.random() < float(r["drop_rate"]):

@@ -1,8 +1,14 @@
 """Economic model: upfront costs, net profit, starting inventory per cell."""
 
+from pathlib import Path
+import pandas as pd 
+
+PRICE_PATH = Path(__file__).parent / "data" / "bomb_food_prices.csv"
+PRICE_DF = pd.read_csv(PRICE_PATH).set_index("item")
+
 # Default prices of bomb and spicy eel, future can add more items
-PRICE_BOMB = 600
-PRICE_FOOD = 175
+PRICE_BOMB = PRICE_DF.loc["bomb", "price"]
+PRICE_FOOD = PRICE_DF.loc["spicy_eel", "price"]
 
 # Death penalty constants
 # assumed: 70% of gross is kept

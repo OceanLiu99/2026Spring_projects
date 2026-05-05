@@ -9,10 +9,10 @@ Differences from 2022:
 from pathlib import Path
 import pandas as pd
 
-DB_PATH = Path(__file__).parent / "data" / "equipments_db.csv"
+EQUIPMENT_PATH = Path(__file__).parent / "data" / "equipments_db.csv"
 
 # Load equipment database
-EQUIPMENT_DB = pd.read_csv(DB_PATH, sep=",")
+EQUIPMENT_DB = pd.read_csv(EQUIPMENT_PATH, sep=",")
 
 
 def load_equipment_db() -> pd.DataFrame:

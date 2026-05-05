@@ -8,10 +8,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-CSV_PATH = Path(__file__).parent / "data" / "sc_rock_drop.csv"
+ROCK_PATH = Path(__file__).parent / "data" / "sc_rock_drop.csv"
 
 # Load once at import; indexed by item name.
-ROCK_DF = pd.read_csv(CSV_PATH).set_index("item")
+ROCK_DF = pd.read_csv(ROCK_PATH).set_index("item")
 
 
 def depth_to_band(depth: int) -> str:
