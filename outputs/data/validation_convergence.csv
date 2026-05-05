@@ -1,0 +1,9 @@
+cell_id,metric,converged,n_required,final_mean,final_drift,n,window,rel_tol,min_n
+pickaxe_nofood,max_depth,False,,11.405,0.02451543247869482,200,20,0.01,50
+pickaxe_nofood,net_profit,False,,24.386999999999944,1.2033970730286818,200,20,0.01,50
+pickaxe_food,max_depth,True,137,55.34,0.009640679337764774,200,20,0.01,50
+pickaxe_food,net_profit,False,,7574.3965,0.012799300678393362,200,20,0.01,50
+bomb_nofood,max_depth,False,,18.45,0.015532891014277439,200,20,0.01,50
+bomb_nofood,net_profit,True,67,-10500.8775,0.009978769732085467,200,20,0.01,50
+bomb_food,max_depth,True,123,60.37,0.007839140260812456,200,20,0.01,50
+bomb_food,net_profit,False,,-1808.1589999999999,0.03739655428678291,200,20,0.01,50

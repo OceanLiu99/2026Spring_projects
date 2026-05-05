@@ -1,0 +1,26 @@
+source,experiment,cell_id,luck_level,metric,n_final,target_relative,convergence_rel_tol,evidence
+overall,H1_H2,all_design_cells,mixed,max_depth_and_net_profit,1000,0.05,0.01,max over H1/H2 sample-size decisions and convergence guards
+sample_size,H1,pickaxe_nofood,1,max_depth,200,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H1,bomb_nofood,1,max_depth,500,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H1,pickaxe_nofood,2,max_depth,200,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H1,bomb_nofood,2,max_depth,500,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H1,pickaxe_nofood,3,max_depth,1000,0.05,,no two adjacent grid points met target; using largest tested N
+sample_size,H1,bomb_nofood,3,max_depth,200,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H1,pickaxe_nofood,4,max_depth,500,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H1,bomb_nofood,4,max_depth,100,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H1,pickaxe_nofood,5,max_depth,500,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H1,bomb_nofood,5,max_depth,500,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H1,pickaxe_nofood,6,max_depth,200,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H1,bomb_nofood,6,max_depth,200,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H2,pickaxe_nofood,4,net_profit,1000,0.05,,no two adjacent grid points met target; using largest tested N
+sample_size,H2,pickaxe_food,4,net_profit,100,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H2,bomb_nofood,4,net_profit,50,0.05,,first N with two adjacent relative CI half-widths under target
+sample_size,H2,bomb_food,4,net_profit,1000,0.05,,no two adjacent grid points met target; using largest tested N
+convergence,phase2,pickaxe_nofood,4,max_depth,200,,0.01,not converged by validation limit; using collected n as guard
+convergence,phase2,pickaxe_nofood,4,net_profit,200,,0.01,not converged by validation limit; using collected n as guard
+convergence,phase2,pickaxe_food,4,max_depth,137,,0.01,rolling mean converged by n_required
+convergence,phase2,pickaxe_food,4,net_profit,200,,0.01,not converged by validation limit; using collected n as guard
+convergence,phase2,bomb_nofood,4,max_depth,200,,0.01,not converged by validation limit; using collected n as guard
+convergence,phase2,bomb_nofood,4,net_profit,67,,0.01,rolling mean converged by n_required
+convergence,phase2,bomb_food,4,max_depth,123,,0.01,rolling mean converged by n_required
+convergence,phase2,bomb_food,4,net_profit,200,,0.01,not converged by validation limit; using collected n as guard

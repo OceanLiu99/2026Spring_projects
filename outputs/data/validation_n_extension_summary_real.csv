@@ -1,0 +1,5 @@
+source,experiment,cell_id,luck_level,metric,n_final,target_relative,evidence
+overall_targeted_extension,H1_H2,targeted_cells,mixed,max_depth_and_net_profit,2000,0.05,max over targeted extension checks
+targeted_extension,H1,pickaxe_nofood,3,max_depth,1000,0.05,two adjacent extension N values met target
+targeted_extension,H2,bomb_food,4,net_profit,2000,0.05,extension grid still did not get two adjacent passing N values
+targeted_extension,H2,pickaxe_nofood,4,net_profit,2000,0.05,extension grid still did not get two adjacent passing N values

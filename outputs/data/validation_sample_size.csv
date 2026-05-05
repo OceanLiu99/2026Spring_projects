@@ -1,0 +1,81 @@
+experiment,cell_id,luck_level,metric,n,mean,std,ci_half_width,relative_half_width,n_replicates,n_recommended,target_relative,evidence
+H1,pickaxe_nofood,1,max_depth,50,9.272,0.736016304167238,0.9138849469754504,0.09856395027776643,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,1,max_depth,100,8.874,0.5763939624944034,0.7156876320113115,0.08064994726293796,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,1,max_depth,200,8.82,0.2963317397782425,0.36794445280772997,0.04171705814146598,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,1,max_depth,500,8.936,0.22088458524758992,0.27426443726010263,0.03069208116160504,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,1,max_depth,1000,8.865,0.2054689757603319,0.255123429949406,0.02877872870269667,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,1,max_depth,50,14.032,1.2207866316437117,1.515806810000437,0.10802500071268792,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,1,max_depth,100,14.376,1.0383063131850834,1.2892275681896004,0.0896791574978854,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,1,max_depth,200,14.112,0.572981238785355,0.7114501758459696,0.05041455327706701,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,1,max_depth,500,14.406,0.3073239333341931,0.38159306380744124,0.02648848145268924,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,1,max_depth,1000,13.9686,0.20638386564845582,0.25625941578581013,0.018345390073866395,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,2,max_depth,50,8.867999999999999,0.5852520824396956,0.7266864406391514,0.08194479483977803,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,2,max_depth,100,9.084,0.5694119773942231,0.7070183524764224,0.07783117046195756,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,2,max_depth,200,9.238,0.2618587405453557,0.32514057075014846,0.03519599163781646,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,2,max_depth,500,9.1076,0.25203729882697906,0.3129456401579837,0.03436093374302601,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,2,max_depth,1000,9.3252,0.3004258643991894,0.3730279799537194,0.040002142576429395,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,2,max_depth,50,14.764,1.2468680764218805,1.5481912010026286,0.1048625847333127,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,2,max_depth,100,14.02,0.81255769025959,1.0089236304589382,0.07196316907695707,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,2,max_depth,200,14.369,0.6230409296346429,0.7736074917347407,0.05383864512038004,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,2,max_depth,500,14.688400000000001,0.5358253446786553,0.6653150398126091,0.04529526972390519,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,2,max_depth,1000,14.502199999999998,0.24148229748782793,0.2998398749941672,0.020675475099927405,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,3,max_depth,50,11.628,1.4225048330322119,1.766273038446954,0.15189826612030907,5,,0.05,no two adjacent grid points met target; using largest tested N
+H1,pickaxe_nofood,3,max_depth,100,10.574,0.8263655365514707,1.0260683360922978,0.09703691470515394,5,,0.05,no two adjacent grid points met target; using largest tested N
+H1,pickaxe_nofood,3,max_depth,200,10.617,0.6475009652502457,0.8039786373534166,0.07572559455151329,5,,0.05,no two adjacent grid points met target; using largest tested N
+H1,pickaxe_nofood,3,max_depth,500,10.4752,0.6056411478755386,0.7520028091478583,0.07178887363943967,5,,0.05,no two adjacent grid points met target; using largest tested N
+H1,pickaxe_nofood,3,max_depth,1000,10.536599999999998,0.13338965477127543,0.16562513206232163,0.015719030053558233,5,,0.05,no two adjacent grid points met target; using largest tested N
+H1,bomb_nofood,3,max_depth,50,16.336000000000002,1.5688467101664207,1.94798047871406,0.11924464242862756,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,3,max_depth,100,16.226,1.04846554545202,1.3018419211448453,0.08023184525729357,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,3,max_depth,200,16.194000000000003,0.4994171602978821,0.6201083080270384,0.03829247301636645,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,3,max_depth,500,16.300800000000002,0.1849086260832634,0.22959438396490964,0.014084853747356548,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,3,max_depth,1000,15.9392,0.24656885448085292,0.3061556696872179,0.019207718686459666,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,4,max_depth,50,12.819999999999999,0.8862279616441809,1.1003973541750858,0.08583442700273682,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,4,max_depth,100,12.784,1.4683426030732742,1.8231881472648845,0.14261484255826692,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,4,max_depth,200,12.626999999999999,0.5596494438485581,0.6948965660415136,0.055032594126990866,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,4,max_depth,500,12.0704,0.30734150386825404,0.3816148805070139,0.03161576091156995,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,4,max_depth,1000,12.2958,0.20527469400781004,0.2548821972917917,0.020729208127311088,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,4,max_depth,50,18.452,1.4389301581383311,1.786667773290015,0.09682786545035849,5,100,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,4,max_depth,100,19.157999999999998,0.7619186308261526,0.9460469334575383,0.04938129937663318,5,100,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,4,max_depth,200,17.801000000000002,0.16268835237963375,0.2020042700768789,0.011347916975275483,5,100,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,4,max_depth,500,18.4128,0.3388085004836807,0.42068631733598894,0.022847492903631653,5,100,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,4,max_depth,1000,18.238,0.2589237339449588,0.32149627871994524,0.01762782534926775,5,100,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,5,max_depth,50,13.412,0.9919274166994276,1.2316405621469424,0.09183123785766048,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,5,max_depth,100,14.142000000000001,0.9173712443716558,1.1390668471236727,0.08054496161247862,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,5,max_depth,200,13.931000000000001,0.5825954857360298,0.7233878401544628,0.051926483393472306,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,5,max_depth,500,14.053999999999998,0.3975399351008654,0.4936110252630054,0.03512245803778322,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,5,max_depth,1000,13.915799999999999,0.293482026706918,0.36440606668185566,0.026186497842873257,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,5,max_depth,50,20.468,1.4952324234044678,1.8565762690882952,0.09070628635373731,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,5,max_depth,100,20.898000000000003,0.4095363231753695,0.5085065084435981,0.024332783445477943,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,5,max_depth,200,20.198,0.8763603710802992,1.0881451222228986,0.05387390445702043,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,5,max_depth,500,20.1084,0.6525908365890533,0.810298547350303,0.040296520227880044,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,5,max_depth,1000,19.8634,0.3469355847992539,0.43077742534100266,0.021686993432192006,5,500,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,6,max_depth,50,14.831999999999999,1.877743326442674,2.3315262863112465,0.1571956773402944,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,6,max_depth,100,13.782000000000002,0.9872790892143922,1.225868901256913,0.08894709775481881,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,6,max_depth,200,14.508000000000001,0.4759280407792758,0.5909427139712797,0.04073219699278189,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,6,max_depth,500,14.3536,0.43814928962626426,0.5440341987674864,0.037902282268384685,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,pickaxe_nofood,6,max_depth,1000,14.085600000000003,0.38950712445345614,0.4836369734777295,0.03433556067741022,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,6,max_depth,50,19.484,1.6257552091259007,2.0186417130638628,0.10360509715991904,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,6,max_depth,100,20.986,0.8857369812760442,1.0997877215281455,0.052405781069672426,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,6,max_depth,200,20.250999999999998,0.7873245836375238,0.9775925904034817,0.04827379341284291,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,6,max_depth,500,20.536,0.46272454008837627,0.5745484025131312,0.02797761991201457,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H1,bomb_nofood,6,max_depth,1000,20.6162,0.47609893929728603,0.5911549125084393,0.028674290728089528,5,200,0.05,first N with two adjacent relative CI half-widths under target
+H2,pickaxe_nofood,4,net_profit,50,167.41799999999992,72.99637792383945,90.63697446730747,0.5413812999038784,5,,0.05,no two adjacent grid points met target; using largest tested N
+H2,pickaxe_nofood,4,net_profit,100,151.42719999999994,92.66757398194903,115.06199041426996,0.7598502145867453,5,,0.05,no two adjacent grid points met target; using largest tested N
+H2,pickaxe_nofood,4,net_profit,200,126.28319999999997,44.65886745037315,55.45130791368227,0.4391028095081712,5,,0.05,no two adjacent grid points met target; using largest tested N
+H2,pickaxe_nofood,4,net_profit,500,134.59695999999997,47.906137728562626,59.48332651054726,0.4419366270274401,5,,0.05,no two adjacent grid points met target; using largest tested N
+H2,pickaxe_nofood,4,net_profit,1000,132.00724000000002,38.579708468610946,47.90303506667108,0.362881877286966,5,,0.05,no two adjacent grid points met target; using largest tested N
+H2,pickaxe_food,4,net_profit,50,7138.9,480.60017580729306,596.7439358303154,0.08359046013115683,5,100,0.05,first N with two adjacent relative CI half-widths under target
+H2,pickaxe_food,4,net_profit,100,7203.8628,225.05921300893257,279.4479222572638,0.03879139983860656,5,100,0.05,first N with two adjacent relative CI half-widths under target
+H2,pickaxe_food,4,net_profit,200,7327.0754000000015,34.1497962629362,42.402572565681325,0.005787107440668799,5,100,0.05,first N with two adjacent relative CI half-widths under target
+H2,pickaxe_food,4,net_profit,500,7487.93204,143.30237682169732,177.9334021565311,0.02376268924531146,5,100,0.05,first N with two adjacent relative CI half-widths under target
+H2,pickaxe_food,4,net_profit,1000,7472.084180000003,73.30228273680329,91.01680546044193,0.012180912750429145,5,100,0.05,first N with two adjacent relative CI half-widths under target
+H2,bomb_nofood,4,net_profit,50,-10480.162399999997,104.88091034502062,130.2268504742488,0.0124260336341972,5,50,0.05,first N with two adjacent relative CI half-widths under target
+H2,bomb_nofood,4,net_profit,100,-10476.4328,130.26167313795693,161.74122988118745,0.015438578471212782,5,50,0.05,first N with two adjacent relative CI half-widths under target
+H2,bomb_nofood,4,net_profit,200,-10453.931999999999,80.16328006247628,99.53585883150238,0.009521379977553172,5,50,0.05,first N with two adjacent relative CI half-widths under target
+H2,bomb_nofood,4,net_profit,500,-10474.845759999997,22.65467759267766,28.12949755774137,0.00268543310347907,5,50,0.05,first N with two adjacent relative CI half-widths under target
+H2,bomb_nofood,4,net_profit,1000,-10464.404700000003,30.52952166150533,37.90740792947313,0.0036225097381290235,5,50,0.05,first N with two adjacent relative CI half-widths under target
+H2,bomb_food,4,net_profit,50,-2505.296800000001,578.9599671628423,718.8737476273348,0.286941550249589,5,,0.05,no two adjacent grid points met target; using largest tested N
+H2,bomb_food,4,net_profit,100,-1987.5534000000007,147.77928816413996,183.4922217935922,0.09232064999792818,5,,0.05,no two adjacent grid points met target; using largest tested N
+H2,bomb_food,4,net_profit,200,-2229.4616,359.3980802650093,446.2516572886088,0.2001611767112781,5,,0.05,no two adjacent grid points met target; using largest tested N
+H2,bomb_food,4,net_profit,500,-2137.43256,197.56476770595535,245.30905937397438,0.11476809325575837,5,,0.05,no two adjacent grid points met target; using largest tested N
+H2,bomb_food,4,net_profit,1000,-2135.457239999999,99.03453446481592,122.96761602383181,0.057583740718606884,5,,0.05,no two adjacent grid points met target; using largest tested N
