@@ -34,12 +34,9 @@ How tested: compare the depth gain from moving `luck_level=1` to `luck_level=6`
 with bombs off against the gain from switching from pickaxe to bomb at neutral
 luck.
 
-**H2 - Distributional dominance and quantile crossing**
+**H2 - Bomb+food effect on profit distribution**
 
-Bomb+food has higher expected profit but higher variance, creating a
-risk-return tradeoff. More formally, the bomb+food net-profit distribution was
-expected to cross the pickaxe+no-food distribution: worse in low quantiles, but
-better in high quantiles.
+Bomb+food was expected to produce higher profit. Additionally, it will produce higher profit in the best runs, but also higher losses in poor runs, creating a high-risk, high-upside profit pattern.
 
 How tested: compare mean profit, standard deviation, death rate, and the
 quantile crossing table for bomb+food versus pickaxe+no-food.
@@ -361,6 +358,7 @@ not used as final N evidence.
 ## Data Sources
 
 - [Stardew Valley Wiki - Skull Cavern](https://stardewvalleywiki.com/Skull_Cavern)
+- [Stardew Valley Wiki - The Mines](https://stardewvalleywiki.com/The_Mines)
 - [Stardew Valley Wiki - Footwear](https://stardewvalleywiki.com/Footwear)
 - [Stardew Valley Wiki - Weapons](https://stardewvalleywiki.com/Weapons#Sword)
 - Previous IS597 Fall 2022 Stardew Valley mining simulation project, included
