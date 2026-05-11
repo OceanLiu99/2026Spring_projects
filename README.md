@@ -245,17 +245,26 @@ into the same pool.
 
 ## How to Run
 
-First activate the project virtual environment.
+First create and activate the project virtual environment.
 
 **Windows:**
 ```powershell
+py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-**macOC / Linux:**
+**macOS / Linux:**
 
 ```bash
+python3 -m venv .venv
 source .venv/bin/activate
+```
+
+Then install the project dependencies:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 Then run tests and doctests:
