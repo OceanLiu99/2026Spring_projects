@@ -214,6 +214,8 @@ The mean-profit claim was rejected. From `outputs/tables/h2_profit_summary.csv`:
 
 Bomb+food did not have higher expected profit. Its mean profit was negative,
 mostly because the upfront cost and death penalty are severe.
+As for why the died rate being close to 100% across all strategies, the reason
+is nofood will leads to death before the day ends and food is limited.
 
 The distribution-crossing part was supported. From
 `outputs/tables/h2_quantile_crossing.csv`, bomb+food is below pickaxe+no-food
