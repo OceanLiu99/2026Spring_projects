@@ -221,7 +221,7 @@ def plot_h3_depth_profit_scatter(rows, correlation_rows, output_path):
             depth_values,
             profit_values,
             s=8,
-            alpha=0.28,
+            alpha=0.2,
             color=color,
             edgecolors="none",
             label=group_name,

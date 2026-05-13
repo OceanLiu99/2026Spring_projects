@@ -77,6 +77,7 @@ class SkullCavernFloor:
     def exit_probability(self, rocks_before: int) -> float:
         """Per-rock exit probability given the rock count before the break.
 
+        >>> import numpy as np
         >>> f = SkullCavernFloor(depth=10, rng=np.random.default_rng(0), luck_value=0.0)
         >>> f.exit_probability(10)
         0.02
