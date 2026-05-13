@@ -389,17 +389,19 @@ floor rule.
 
 There is a previous IS597 Fall 2022 Stardew Valley mining simulation project, its original source is [https://github.com/PhiloJiaqiWang/2022Fall_projects](https://github.com/PhiloJiaqiWang/2022Fall_projects).
 
-Since the basic game logis of Skull Cavern is as same as Mining, this project is built on the basis of this previous project, especially the game engine section (/skull_cavern). Specifically, main game engine files (equipment, floor, monster, player, rock) are refactored from same-name classes in game_logic.py from previous project. But some classes are reorganized, for example, the equipment.py also includes “generate_att_from_equip“ function from class Player. Additionally, combat and run are refactored from MainGame class. Economy, stategy and time_budget are new functions that make this project align with the skull cavern logic.
+Since the basic game logic of Skull Cavern is as same as Mining, this project is built on the basis of this previous project, especially the game engine section (/skull_cavern). Specifically, main game engine files (equipment, floor, monster, player, rock) are refactored from same-name classes in game_logic.py from the previous project. But some classes are reorganized, for example, the equipment.py also includes “generate_att_from_equip“ function from the class Player. Additionally, combat and run are refactored from the MainGame class. Economy, stategy and time_budget are new functions that make this project align with the skull cavern logic.
 
 ## Use of AI
 
-AI assisted in following aspects:
+AI assisted in the following aspects:
 
-1. Suggested how to reorganize project structure when there are too many classes in the skull cavern engine.
-2. Suggested adding a run-row contract layer to avoid field names disagreement between game engine and analysis pipeline.
+1. Suggested how to reorganize the project structure when there are too many classes in the skull cavern engine.
+2. Suggested adding a run-row contract layer to avoid field name disagreement between the game engine and the analysis pipeline.
 3. Suggested the validation framework, including rolling-window convergence rule, the N-grid sweep using analytic t-based 95% CI half-width, and the Pearson-correlation sensitivity check.
-4. Suggested to use an orchestrator pattern to generate four CSV outputs in `validation/run_phase2.py`.
-5. Suggested the initial statistical helper for `analysis/stats.py` (Welch t, Cohen's d, Pearson r with Fisher-z CI) and provided reference doctest.
-6. Suggested the analysis pipeline outline, first use experiment scripts outputs run-level CSVs, then use analysis scripts to produce summary tables and figures.
-7. Built pytests based on doctest examples, to guarantee the code output result as expected.
-8. Drafted critique, limitations and polished languages in README.md.
+4. Suggested a sample-size recommendation safeguard requiring adjacent N-grid results to meet the precision target, so N_final would not depend on one unusually stable batch.
+5. Suggested to use an orchestrator pattern to generate four CSV outputs in `validation/run_phase2.py`.
+6. Suggested an extended-N follow-up for cells that did not stabilize on the original grid, while the target cells and final `N=2000`interpretation were selected by the author.
+7. Suggested the initial statistical helper for `analysis/stats.py` (Welch t, Cohen's d, Pearson r with Fisher-z CI) and provided reference doctest.
+8. Suggested the analysis pipeline outline, first use experiment scripts outputs run-level CSVs, then use analysis scripts to produce summary tables and figures.
+9. Built pytests based on doctest examples, to guarantee the code output result as expected.
+10. Drafted critique, limitations, and polished language in README.md.
